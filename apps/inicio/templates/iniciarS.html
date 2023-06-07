@@ -1,0 +1,22 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block contenido %}
+<div class="inicio">
+  <div> <h1>Iniciar sesión</h1>
+<p>{{error}}</p>
+
+<form method="POST">
+  {% csrf_token %}
+  {% for field in form.visible_fields %}
+  <label class="inputF">{{field.label}}: {{field}}</label>
+  <br>
+  {% endfor %}
+  <button type="submit">Iniciar sesión</button>
+</form>
+</div>
+
+</div>
+
+
+{% endblock contenido %}
