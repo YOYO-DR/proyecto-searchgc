@@ -4,7 +4,17 @@
 {% block contenido %}
 <div class="inicio">
   <div> <h1>Iniciar sesión</h1>
+{% if form.errors %}
+{% for field in form %}
+{% for error in field.errors %}
 <p>{{error}}</p>
+{% endfor %}
+{% endfor %}
+
+{% for error in form.non_field_errors %}
+<p>{{error}}</p>
+{% endfor %}
+{% endif %}
 
 <form method="POST">
   {% csrf_token %}
@@ -15,8 +25,5 @@
   <button type="submit">Iniciar sesión</button>
 </form>
 </div>
-
 </div>
-
-
 {% endblock contenido %}
