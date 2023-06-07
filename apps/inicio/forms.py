@@ -13,4 +13,4 @@ class crearUsuario(UserCreationForm):
             'email': forms.TextInput(attrs={'id':'correo'}),
             'first_name': forms.TextInput(attrs={'required':True,'autofocus':True}),
             'last_name': forms.TextInput(attrs={'required':True})
-        }
+        } 
