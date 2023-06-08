@@ -1,7 +1,7 @@
 from typing import Any, Dict
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from apps.inicio.models import User
+from apps.user.models import User
 import re
 #creo la subclase del formulario de crear usuario para agregarle el email
 class crearUsuario(UserCreationForm):

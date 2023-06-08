@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'storages',
     #Mis apps
     'apps.inicio',
-    'apps.user'
+    'apps.user',
+    'apps.juegos'
 ]
 
 MIDDLEWARE = [

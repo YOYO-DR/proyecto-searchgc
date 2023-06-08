@@ -1,0 +1,8 @@
+{% extends 'home.html' %}
+{% block content %}
+<h1>Caracteristicas del computador</h1>
+<h2>Graficas</h2>
+{% for clave, valor in graficas.items %}
+<p><b>{{clave}}</b>: {{valor}}</p>
+{% endfor %}
+{% endblock content %}
