@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     #libs
     'widget_tweaks',
     #Mis apps
-    'apps.inicio'
+    'apps.inicio',
+    'apps.user'
 ]
 
 MIDDLEWARE = [
@@ -131,9 +132,25 @@ USE_TZ = True
 STATICFILES_DIRS = [
   os.path.join(BASE_DIR,"static")
   ]
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
+#media
+#carpeta donde se van a guardar los archivos subidos
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+#link de como se accede a ellos de forma publica
+MEDIA_URL = '/media/'
 
+# despues de que cierre sesión
+LOGOUT_REDIRECT_URL = 'inicio:inicio'
+
+# despues de iniciar sesion con el LoginView
+LOGIN_REDIRECT_URL = 'inicio:inicio'
+
+# por si dentra a una vista que requiera que el usuario inicie sesión
+LOGIN_URL = 'inicio:iniciarsesion'
+
+# clase usuario modificada
+AUTH_USER_MODEL = 'user.User'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

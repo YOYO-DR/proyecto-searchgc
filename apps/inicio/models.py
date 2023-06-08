@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from apps.user.models import User
 
 class UrlJuegos(models.Model):
     url = models.TextField(null=False, blank=False)
