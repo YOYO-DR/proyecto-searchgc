@@ -3,12 +3,15 @@
 {% block contenido %} 
 {% if user.is_authenticated %}
 <h1>Hola {{user.username|title}}, {{dato}}</h1>
-<form class="d-flex flex-column border w-50 p-2" enctype="multipart/form-data" action="{% url 'juegos:procesar' %}" method="post" >
-  {% csrf_token %}
+<form id="envioTxt" class="d-flex flex-column border w-50 p-2">
   <input type="file" name="archivo" accept=".txt" />
-  <button class="btn btn-success w-25 mt-2">Subir</button>
+  <button class="btn btn-success w-25 mt-2" type="submit">Subir</button>
 </form>
 {% else %}
 <h1>{{dato}}</h1>
 {% endif %} 
 {% endblock contenido %}
+
+{% block js %}
+<script src="{% static 'js/enviarpost.js' %}" data-token="{{csrf_token}}" data-url={% url 'juegos:procesar' %} data-id="envioTxt"></script>
+{% endblock js %}

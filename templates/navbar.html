@@ -23,6 +23,7 @@
             >Salir</a
           >
         </li>
+        <img class="foto-perfil" src="{{request.user.get_imagen}}" alt="">
         {% else %} {% if request.path_info != "/registro/" %}
         <li class="nav-item">
           <a
