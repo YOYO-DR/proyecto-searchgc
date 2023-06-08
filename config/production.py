@@ -22,8 +22,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 # agregamos el storage
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # porque ya defini en el setting (STORAGES) cual va a ser el default
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 #Pedimos la config de la base de datos
 conn_str = os.environ['AZURE_MYSQL_CONNECTIONSTRING']

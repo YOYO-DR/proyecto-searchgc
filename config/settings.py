@@ -28,10 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# En resumen, esta configuración asegura que solo los orígenes especificados en la lista CSRF_TRUSTED_ORIGINS sean considerados como seguros para realizar solicitudes POST, PUT, DELETE, etc. y protege la aplicación Django de los ataques CSRF.
-if 'CODESPACE_NAME' in os.environ:
-    CSRF_TRUSTED_ORIGINS = [f'https://{os.getenv("CODESPACE_NAME")}-8000.{os.getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN")}']
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #libs
     'widget_tweaks',
+    'storages',
     #Mis apps
     'apps.inicio',
     'apps.user'
@@ -116,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'es-co'
+LANGUAGE_CODE = 'es-419'
 
 TIME_ZONE = 'UTC'
 
@@ -132,13 +129,14 @@ USE_TZ = True
 STATICFILES_DIRS = [
   os.path.join(BASE_DIR,"static")
   ]
+
 STATIC_URL = '/static/'
 
 #media
 #carpeta donde se van a guardar los archivos subidos
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR,'media') # porque voy a utilizar azure
 #link de como se accede a ellos de forma publica
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 
 # despues de que cierre sesión
 LOGOUT_REDIRECT_URL = 'inicio:inicio'
@@ -156,3 +154,23 @@ AUTH_USER_MODEL = 'user.User'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#almacenmiento azure
+# Configuración para el diccionario de storages
+# si estamos en producción o desarrollo, y saber de donde traer la configuración
+if 'WEBSITE_HOSTNAME' in os.environ: 
+    azure_storage_blob = os.environ['AZURE_STORAGE_BLOB']
+    azure_storage_blob_parametros = {parte.split(' = ')[0]:parte.split(' = ')[1] for parte in azure_storage_blob.split('  ')}
+else:
+    azure_storage_blob_parametros = {'account_name':os.environ.get('ACCOUNT_NAME'),
+                                     'container_name':os.environ.get('CONTAINER_NAME'),
+                                     'account_key':os.environ.get('ACCOUNT_KEY')}
+
+AZURE_CONTAINER = azure_storage_blob_parametros['container_name']
+AZURE_ACCOUNT_NAME = azure_storage_blob_parametros['account_name']
+AZURE_ACCOUNT_KEY = azure_storage_blob_parametros['account_key']
+STORAGES = {
+    "default": {"BACKEND": "storages.backends.azure_storage.AzureStorage"},
+    "staticfiles": {"BACKEND": "custom_storage.custom_azure.PublicAzureStaticStorage"},
+    "media": {"BACKEND": "custom_storage.custom_azure.PublicAzureMediaStorage"},
+}
