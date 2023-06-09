@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import View
 
-from .functions import obtenerCara
+from .functions import obtenerCara,guardarCara
 
 
 class ProcesarDatos(View):
@@ -23,4 +23,5 @@ class ProcesarDatos(View):
            linea_decodificada=linea.decode('utf-8',errors='ignore')
            data.append(linea_decodificada)
         cara=obtenerCara(data)
-        return JsonResponse(cara,safe=False)
+        guardarCara(cara)
+        return JsonResponse(cara)
