@@ -43,8 +43,14 @@ def obtenerCara(ar:list):
       if r==0:
         r=1
     if r!=0:
+      if 'type' in linea and 'unknown' in linea:
+        del rams[canRams]
+        canRams-=1
+        r=0
+        continue
       if 'format' in linea and 'unknown' in linea:
         del rams[canRams]
+        canRams-=1
         r=0
         continue
       if 'type' in linea:
@@ -54,7 +60,13 @@ def obtenerCara(ar:list):
       if 'speed' in linea:
         rams[canRams]['velocidad']=linea.strip()[5:].strip()
       if linea.strip()=='':
-        r=0
+        if rams[canRams].get('tipo') and rams[canRams].get('tamano'):
+          r=0
+        else:
+          r=0
+          del rams[canRams]
+          canRams-=1
+          
     # informacion del procesador
     if 'DMI Processor' in linea:
       cpu.append({})
