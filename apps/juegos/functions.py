@@ -190,7 +190,6 @@ def guardarCara(carate:dict):
       if nucleos != 0:
         g.nucleos=nucleos
 
-    
     if grafica.get('nombre'):
       # obtengo la grafica por su nombre, si no existe, la creo con sus valores, de lo contrario no hago nada
       creado=Graficas.objects.filter(nombre__exact=grafica.get('nombre')).exists()
