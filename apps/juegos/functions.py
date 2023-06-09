@@ -1,3 +1,8 @@
+from .models import UrlJuegos,Telefonos,Favoritos,Favoritos_UrlJuegos,Historiales,RamsVelocidades,TipoRam,Rams,Procesadores,SistemasOperativos,GraficasGb,GraficasVelocidades,Graficas,Dispositivos
+
+# constantes
+ramMaximaVelocidad=8400
+
 def obtenerCara(ar:list):
   g=0
   r=0
@@ -5,16 +10,16 @@ def obtenerCara(ar:list):
   so=0
   st=0
   # ---------
-  graficas=['graficas']
-  canGraficas=0
-  rams=['rams']
-  canRams=0
-  cpu=['procesador']
-  canCpu=0
-  sisOp=['sistema operativo']
-  canSis=0
-  storage=['discos']
-  canSto=0
+  graficas=[]
+  canGraficas=-1
+  rams=[]
+  canRams=-1
+  cpu=[]
+  canCpu=-1
+  sisOp=[]
+  canSis=-1
+  storage=[]
+  canSto=-1
   for linea in ar:
     # informacion de las graficas
     if 'Display adapter' in linea:
@@ -68,12 +73,28 @@ def obtenerCara(ar:list):
           canRams-=1
           
     # informacion del procesador
-    if 'DMI Processor' in linea:
+    if 'Socket 1' in linea and 'ID =' in linea:
       cpu.append({})
       canCpu+=1
       if c==0:
+        c=2
+    if c==2:
+      if 'Number of cores' in linea:
+        maximoCorteC=linea.index('(')-1
+        cpu[canCpu]['nucleos']=linea.strip()[15:maximoCorteC].strip()
+        continue
+      if 'Number of threads' in linea:
+        maximoCorteH=linea.index('(')-1
+        cpu[canCpu]['hilos']=linea.strip()[17:maximoCorteH].strip()
+        continue
+      if 'Stock frequency' in linea:
+        cpu[canCpu]['velocidad']=linea.strip()[15:].strip()
+        c=0
+
+    if 'DMI Processor' in linea:
+      if c==0:
         c=1
-    if c!=0:
+    if c==1:
       if 'model' in linea:
         cpu[canCpu]['modelo']=linea.strip()[5:].strip()
       if 'clock speed' in linea and 'max' not in linea:
@@ -102,16 +123,111 @@ def obtenerCara(ar:list):
     if st!=0:
       if 'Capacity' in linea:
         gb=linea.index('GB')-1
-        capacity=float(linea.strip()[8:gb].strip())
         storage[canSto]['capacidad']=linea.strip()[8:].strip()
       # para que no lea el tipo de bus
       if 'Type' in linea and not 'Bus' in linea:
         storage[canSto]['tipo']=linea.strip()[4:].strip()
-      if 'Volume' in linea:
+      if 'Volume' in linea and not storage[canSto].get('disponible'):
+        gbDiscoPosiciones=[linea.index(',')+1,linea.index('GBytes')]
+        gbDisco=float(linea[gbDiscoPosiciones[0]:gbDiscoPosiciones[1]].strip())
         pare=[linea.index('(')+1,linea.index('percent')-1]
         porcentaje=float(linea[pare[0]:pare[1]])
-        disponible=round((capacity*(porcentaje/100)),2)
-        storage[canSto]['disponible']=str(disponible)+'GB'
-        st=0
+        disponible=str(round((gbDisco*(porcentaje/100)),2))+' GB'
+        storage[canSto]['disponible']=disponible
+        continue
+      
+      if 'Volume' in linea:
+        if storage[canSto].get('disponible'):
+          disponible=storage[canSto].get('disponible')
 
-  return [graficas,rams,cpu,sisOp,storage]
+          gbDiscoPosiciones=[linea.index(',')+1,linea.index('GBytes')]
+          gbDisco=float(linea[gbDiscoPosiciones[0]:gbDiscoPosiciones[1]].strip())
+          pare=[linea.index('(')+1,linea.index('percent')-1]
+          porcentaje=float(linea[pare[0]:pare[1]])
+          disponible2=str(round((gbDisco*(porcentaje/100)),2))+' GB'
+
+          if not disponible2==disponible:
+            storage[canSto]['disponible2']=disponible2
+            st=0
+
+  return {'graficas':graficas,'rams':rams,'procesador':cpu,'sisOpe':sisOp,'discos':storage}
+
+def guardarCara(carate:dict):
+  #guardar grafica(s)
+  graficas=carate['graficas']
+
+  #recorro las graficas y empiezo a guardar los valores
+  for grafica in graficas:
+    #creo el objeto de la grafica a guardar
+    g=Graficas()
+    if grafica.get('tamano'):
+      #extraigo el tamaño si existe, le quito el gb y lo convierto en numero float
+      if 'MB' in grafica.get('tamano'):
+        tamano=float((float(grafica.get('tamano').replace('MB','').strip()))//1000)
+      else:
+        tamano=float(grafica.get('tamano').replace('GB','').strip())
+      # lo creo sino existe, de lo contrario solo lo obtengo
+      objTama,creado = GraficasGb.objects.get_or_create(gb=tamano)
+      # lo relaciono con objeto creado
+      g.gb=objTama
+      if creado:
+        print('tamaño de grafica agregado\n')
+    
+    if grafica.get('velocidadNucleo'):
+      #extraigo la velocidad si existe, le quito el mhz y lo convierto en numero int
+      vel=int(float(grafica.get('velocidadNucleo').replace('MHz','').strip()))
+      
+      # lo creo sino existe, de lo contrario solo lo obtengo
+      objVel,creado=GraficasVelocidades.objects.get_or_create(velocidadMhz=vel)
+      # lo relaciono con objeto creado
+      g.velocidad=objVel
+      if creado:
+        print('velocidad de grafica agregada\n')
+    
+    if grafica.get('cantidadNucleos'):
+      # obtengo la cantidad de nucleos y lo agrego al objeto creado
+      nucleos=int(grafica.get('cantidadNucleos'))
+      if nucleos != 0:
+        g.nucleos=nucleos
+
+    
+    if grafica.get('nombre'):
+      # obtengo la grafica por su nombre, si no existe, la creo con sus valores, de lo contrario no hago nada
+      creado=Graficas.objects.filter(nombre__exact=grafica.get('nombre')).exists()
+      if not creado:
+        g.nombre=grafica.get('nombre')
+        g.save()
+        print('Nombre de grafica guardado\n')
+  
+  #recorro las rams y empiezo a guardar los valores
+  rams=carate['rams']
+  for ram in rams:
+    r=Rams()
+    if ram.get('velocidad'):
+      vel=int(ram.get('velocidad').replace('MHz','').strip())
+      if vel<ramMaximaVelocidad:
+        objRam,creado=RamsVelocidades.objects.get_or_create(velocidadMhz=vel)
+        r.velocidad=objRam
+        if creado:
+          print('Velocidad de ram agregada')
+    
+    if ram.get('tipo'):
+      objTipo,creado=TipoRam.objects.get_or_create(nombre=ram.get('tipo'))
+      r.tipo=objTipo
+      if creado:
+        print('Tipo de ram agregado')
+    
+    if ram.get('tamano'):
+      tamano=int(ram.get('tamano').replace('GB','').strip())
+      r.gb=tamano
+      verificarExistencia=Rams.objects.filter(gb=r.gb,tipo=r.tipo,velocidad=r.velocidad).exists()
+      if not verificarExistencia:
+        r.save()
+
+  procesador=carate['procesador']
+  for pro in procesador:
+    p=Procesadores()
+
+    
+  sistema=carate['sisOpe']
+  discos=carate['discos']

@@ -49,9 +49,17 @@ class RamsVelocidades(models.Model):
         verbose_name = 'Ram Velocidad'
         verbose_name_plural = 'Rams Velocidades'
 
+class TipoRam(models.Model):
+    nombre=models.CharField(max_length=10,null=False, blank=False)
+
+    class Meta:
+        verbose_name = 'Tipo ram'
+        verbose_name_plural = 'Tipos rams'
+
 class Rams(models.Model):
     gb=models.IntegerField(null=False, blank=False)
-    velocidad = models.ForeignKey(RamsVelocidades,on_delete=models.CASCADE,null=False,blank=False)
+    tipo=models.ForeignKey(TipoRam, on_delete=models.CASCADE ,null=False, blank=False)
+    velocidad = models.ForeignKey(RamsVelocidades,on_delete=models.CASCADE,null=True,blank=True)
 
     class Meta:
         verbose_name = 'Ram'
@@ -61,7 +69,7 @@ class Procesadores(models.Model):
     nombre = models.CharField(max_length=100,null=False, blank=False)
     nucleos=models.IntegerField(null=False, blank=False)
     hilos=models.IntegerField(null=False, blank=False)
-    ghz=models.DecimalField(max_digits=3,decimal_places=1,null=False, blank=False)
+    mhz=models.IntegerField(null=False, blank=False)
 
     class Meta:
         verbose_name = 'Procesador'
@@ -90,8 +98,9 @@ class GraficasVelocidades(models.Model):
 
 class Graficas(models.Model):
     nombre = models.CharField(max_length=100,null=False, blank=False)
-    gb=models.ForeignKey(GraficasGb,on_delete=models.CASCADE,null=False,blank=False)
-    velocidad=models.ForeignKey(GraficasVelocidades,on_delete=models.CASCADE,null=False,blank=False)
+    nucleos=models.IntegerField(null=True, blank=True)
+    gb=models.ForeignKey(GraficasGb,on_delete=models.CASCADE,null=True, blank=True)
+    velocidad=models.ForeignKey(GraficasVelocidades,on_delete=models.CASCADE,null=True,blank=True)
 
     class Meta:
         verbose_name = 'Grafica'

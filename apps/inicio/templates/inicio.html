@@ -4,7 +4,7 @@
 {% if user.is_authenticated %}
 <h1>Hola {{user.username|title}}, {{dato}}</h1>
 <form id="envioTxt" class="d-flex flex-column border w-50 p-2">
-  <input type="file" name="archivo" accept=".txt" />
+  <input type="file" name="archivo" accept=".txt" required />
   <button class="btn btn-success w-25 mt-2" type="submit">Subir</button>
 </form>
 {% else %}
