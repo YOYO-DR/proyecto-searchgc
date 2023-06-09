@@ -69,7 +69,7 @@ class Procesadores(models.Model):
     nombre = models.CharField(max_length=100,null=False, blank=False)
     nucleos=models.IntegerField(null=False, blank=False)
     hilos=models.IntegerField(null=False, blank=False)
-    ghz=models.DecimalField(max_digits=3,decimal_places=1,null=False, blank=False)
+    mhz=models.IntegerField(null=False, blank=False)
 
     class Meta:
         verbose_name = 'Procesador'

@@ -1,4 +1,7 @@
-from .models import UrlJuegos,Telefonos,Favoritos,Favoritos_UrlJuegos,Historiales,RamsVelocidades,Rams,Procesadores,SistemasOperativos,GraficasGb,GraficasVelocidades,Graficas,Dispositivos
+from .models import UrlJuegos,Telefonos,Favoritos,Favoritos_UrlJuegos,Historiales,RamsVelocidades,TipoRam,Rams,Procesadores,SistemasOperativos,GraficasGb,GraficasVelocidades,Graficas,Dispositivos
+
+# constantes
+ramMaximaVelocidad=8400
 
 def obtenerCara(ar:list):
   g=0
@@ -64,12 +67,28 @@ def obtenerCara(ar:list):
       if linea.strip()=='':
         r=0
     # informacion del procesador
-    if 'DMI Processor' in linea:
+    if 'Socket 1' in linea and 'ID =' in linea:
       cpu.append({})
       canCpu+=1
       if c==0:
+        c=2
+    if c==2:
+      if 'Number of cores' in linea:
+        maximoCorteC=linea.index('(')-1
+        cpu[canCpu]['nucleos']=linea.strip()[15:maximoCorteC].strip()
+        continue
+      if 'Number of threads' in linea:
+        maximoCorteH=linea.index('(')-1
+        cpu[canCpu]['hilos']=linea.strip()[17:maximoCorteH].strip()
+        continue
+      if 'Stock frequency' in linea:
+        cpu[canCpu]['velocidad']=linea.strip()[15:].strip()
+        c=0
+
+    if 'DMI Processor' in linea:
+      if c==0:
         c=1
-    if c!=0:
+    if c==1:
       if 'model' in linea:
         cpu[canCpu]['modelo']=linea.strip()[5:].strip()
       if 'clock speed' in linea and 'max' not in linea:
@@ -173,8 +192,36 @@ def guardarCara(carate:dict):
         g.nombre=grafica.get('nombre')
         g.save()
         print('Nombre de grafica guardado\n')
-    
+  
+  #recorro las rams y empiezo a guardar los valores
   rams=carate['rams']
+  for ram in rams:
+    r=Rams()
+    if ram.get('velocidad'):
+      vel=int(ram.get('velocidad').replace('MHz','').strip())
+      if vel<ramMaximaVelocidad:
+        objRam,creado=RamsVelocidades.objects.get_or_create(velocidadMhz=vel)
+        r.velocidad=objRam
+        if creado:
+          print('Velocidad de ram agregada')
+    
+    if ram.get('tipo'):
+      objTipo,creado=TipoRam.objects.get_or_create(nombre=ram.get('tipo'))
+      r.tipo=objTipo
+      if creado:
+        print('Tipo de ram agregado')
+    
+    if ram.get('tamano'):
+      tamano=int(ram.get('tamano').replace('GB','').strip())
+      r.gb=tamano
+      verificarExistencia=Rams.objects.filter(gb=r.gb,tipo=r.tipo,velocidad=r.velocidad).exists()
+      if not verificarExistencia:
+        r.save()
+
   procesador=carate['procesador']
+  for pro in procesador:
+    p=Procesadores()
+
+    
   sistema=carate['sisOpe']
   discos=carate['discos']
