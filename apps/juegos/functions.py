@@ -65,7 +65,13 @@ def obtenerCara(ar:list):
       if 'speed' in linea:
         rams[canRams]['velocidad']=linea.strip()[5:].strip()
       if linea.strip()=='':
-        r=0
+        if rams[canRams].get('tipo') and rams[canRams].get('tamano'):
+          r=0
+        else:
+          r=0
+          del rams[canRams]
+          canRams-=1
+          
     # informacion del procesador
     if 'Socket 1' in linea and 'ID =' in linea:
       cpu.append({})
@@ -184,7 +190,6 @@ def guardarCara(carate:dict):
       if nucleos != 0:
         g.nucleos=nucleos
 
-    
     if grafica.get('nombre'):
       # obtengo la grafica por su nombre, si no existe, la creo con sus valores, de lo contrario no hago nada
       creado=Graficas.objects.filter(nombre__exact=grafica.get('nombre')).exists()
