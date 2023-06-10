@@ -86,7 +86,7 @@ def obtenerCara(ar:list):
         c=0
 
     if 'DMI Processor' in linea:
-      if c==0:
+      if c==0 or c==2:
         c=1
     if c==1:
       if 'model' in linea:
@@ -221,7 +221,35 @@ def guardarCara(carate:dict):
   procesador=carate['procesador']
   for pro in procesador:
     p=Procesadores()
+    e=0
+    if pro.get('modelo'):
+      if Procesadores.objects.filter(nombre__iexact=pro.get('modelo')).exists():
+        e=1
+      if e==1:
+        break
+      p.nombre=pro.get('modelo')
+    if pro.get('hilos'):
+      hilos=int(pro.get('hilos').strip())
+      p.hilos=hilos
+    if pro.get('nucleos'):
+      nucleosP=int(pro.get('nucleos').strip())
+      p.nucleos=nucleosP
+    if pro.get('velocidad'):
+      vel=int(float(pro.get('velocidad').replace('MHz','').strip()))
+      p.mhz=vel
 
-    
+    if pro.get('velocidadMaxima'):
+      velM=int(float(pro.get('velocidadMaxima').replace('MHz','').strip()))
+      p.mhz=velM
+    p.save()
+
   sistema=carate['sisOpe']
+  for sis in sistema:
+    s=SistemasOperativos()
+    if sis.get('nombre'):
+      sistemaOpe=sis.get('nombre')
+      if not SistemasOperativos.objects.filter(nombre__iexact=sistemaOpe).exists():
+        s.nombre=sistemaOpe
+        s.save()
+
   discos=carate['discos']

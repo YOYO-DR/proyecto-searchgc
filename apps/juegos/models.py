@@ -67,9 +67,9 @@ class Rams(models.Model):
 
 class Procesadores(models.Model):
     nombre = models.CharField(max_length=100,null=False, blank=False)
-    nucleos=models.IntegerField(null=False, blank=False)
-    hilos=models.IntegerField(null=False, blank=False)
-    mhz=models.IntegerField(null=False, blank=False)
+    nucleos=models.IntegerField(null=True, blank=True)
+    hilos=models.IntegerField(null=True, blank=True)
+    mhz=models.IntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'Procesador'
