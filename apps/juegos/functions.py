@@ -106,14 +106,14 @@ def obtenerCara(ar:list):
     if 'Software' in linea:
       sisOp.append({})
       canSis+=1
-      if st==0:
-        st=1
-    if st!=0:
+      if so==0:
+        so=1
+    if so!=0:
       if 'Windows Version' in linea:
         # el segundo windows de la linea tiene un espacio atras, el primero que es el que no quiero, no tiene ese espacio
         bit = linea.index(' Windows')+12
         sisOp[canSis]['nombre']=linea.strip()[15:bit].strip()
-        st=0
+        so=0
     # espacio
     if 'Drive	' in linea:
       storage.append({})
