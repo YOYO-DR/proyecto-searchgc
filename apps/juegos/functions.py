@@ -102,6 +102,7 @@ def obtenerCara(ar:list):
       if 'max clock speed' in linea:
         cpu[canCpu]['velocidadMaxima']=linea.strip()[15:].strip()
         c=0
+    
     # informacion del sistema operativo
     if 'Software' in linea:
       sisOp.append({})
@@ -122,21 +123,21 @@ def obtenerCara(ar:list):
         st=1
     if st!=0:
       if 'Capacity' in linea:
-        gb=linea.index('GB')-1
         storage[canSto]['capacidad']=linea.strip()[8:].strip()
       # para que no lea el tipo de bus
       if 'Type' in linea and not 'Bus' in linea:
         storage[canSto]['tipo']=linea.strip()[4:].strip()
       if 'Volume' in linea and not storage[canSto].get('disponible'):
-        gbDiscoPosiciones=[linea.index(',')+1,linea.index('GBytes')]
-        gbDisco=float(linea[gbDiscoPosiciones[0]:gbDiscoPosiciones[1]].strip())
-        pare=[linea.index('(')+1,linea.index('percent')-1]
-        porcentaje=float(linea[pare[0]:pare[1]])
-        disponible=str(round((gbDisco*(porcentaje/100)),2))+' GB'
+        gbDiscoPosiciones=[linea.index(',')+1,linea.index('GBytes')] # posiciones para sacar las gb de la particion 1
+        gbDisco=float(linea[gbDiscoPosiciones[0]:gbDiscoPosiciones[1]].strip()) #obtengo las gb y convierto a numero
+        
+        pare=[linea.index('(')+1,linea.index('percent')-1] # posiciones para cortar y sacar el porcentaje disponible
+        porcentaje=float(linea[pare[0]:pare[1]]) # corto y convierto a numero
+        disponible=str(round((gbDisco*(porcentaje/100)),2))+' GB' # guardo como string
         storage[canSto]['disponible']=disponible
         continue
       
-      if 'Volume' in linea:
+      if 'Volume' in linea: # por si el disco tiene una segunda particion
         if storage[canSto].get('disponible'):
           disponible=storage[canSto].get('disponible')
 
