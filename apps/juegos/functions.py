@@ -171,7 +171,9 @@ def guardarCara(carate:dict):
   #recorro las graficas y empiezo a guardar los valores
   for grafica in graficas:
     #creo el objeto de la grafica a guardar
-    g=Graficas()
+    if not grafica.get('nombre'):
+      break
+    g,gCreado=Graficas.objects.get_or_create(nombre=grafica.get('nombre'))
     if grafica.get('tamano'):
       #extraigo el tamaño si existe, le quito el gb y lo convierto en numero float
       if 'MB' in grafica.get('tamano'):
@@ -180,7 +182,7 @@ def guardarCara(carate:dict):
         tamano=float(grafica.get('tamano').replace('GB','').strip())
       # lo creo sino existe, de lo contrario solo lo obtengo
       objTama,creado = GraficasGb.objects.get_or_create(gb=tamano)
-      # lo relaciono con objeto creado
+        # lo relaciono con objeto creado
       g.gb=objTama
       if creado:
         print('tamaño de grafica agregado\n')
@@ -201,14 +203,6 @@ def guardarCara(carate:dict):
       nucleos=int(grafica.get('cantidadNucleos'))
       if nucleos != 0:
         g.nucleos=nucleos
-
-    if grafica.get('nombre'):
-      # obtengo la grafica por su nombre, si no existe, la creo con sus valores, de lo contrario no hago nada
-      creado=Graficas.objects.filter(nombre__exact=grafica.get('nombre')).exists()
-      if not creado:
-        g.nombre=grafica.get('nombre')
-        g.save()
-        print('Nombre de grafica guardado\n')
   
   #recorro las rams y empiezo a guardar los valores
   rams=carate['rams']
