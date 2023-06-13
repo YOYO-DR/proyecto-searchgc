@@ -193,8 +193,13 @@ def guardarCara(carate:dict):
       
       # lo creo sino existe, de lo contrario solo lo obtengo
       objVel,creado=GraficasVelocidades.objects.get_or_create(velocidadMhz=vel)
-      # lo relaciono con objeto creado
-      g.velocidad=objVel
+      if not gCreado:
+        if not g.velocidad.velocidadMhz > objVel.velocidadMhz:
+          # lo relaciono con objeto creado
+          g.velocidad=objVel
+      else:
+        g.velocidad=objVel
+
       if creado:
         print('velocidad de grafica agregada\n')
     
