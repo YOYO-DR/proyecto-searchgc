@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import AuthenticationForm
+# from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView
 
-from .forms import crearUsuario
+from .forms import crearUsuarioForm, IniciarSesionForm
 
 
 class InicioView(TemplateView):
@@ -19,7 +19,7 @@ class InicioView(TemplateView):
 
 
 class RegitroView(FormView):
-  form_class = crearUsuario
+  form_class = crearUsuarioForm
   template_name = 'registro.html'
   success_url = reverse_lazy('inicio:inicio')
 
@@ -38,11 +38,6 @@ class RegitroView(FormView):
     login(self.request, user)
     return HttpResponseRedirect(self.success_url)
   
-  def form_invalid(self, form):
-    for i in form.errors:
-      print(i)
-    return super().form_invalid(form)
-  
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
     context['title'] = 'Iniciar sesión'
@@ -50,7 +45,7 @@ class RegitroView(FormView):
 
 
 class IniciarSesionView(FormView):
-  form_class = AuthenticationForm
+  form_class = IniciarSesionForm
   template_name = 'iniciarS.html'
   success_url = reverse_lazy('inicio:inicio')
 
