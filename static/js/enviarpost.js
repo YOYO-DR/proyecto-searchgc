@@ -1,29 +1,26 @@
-const currentScript = document.currentScript;
-const csrftoken = currentScript.dataset.token;
-const url = currentScript.dataset.url;
-const idForm = currentScript.dataset.id;
+function enviarPost(idForm, csrftoken, url, funcion) {
+  const form = document.getElementById(idForm);
 
-const form = document.getElementById(idForm);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    const formData = new FormData(form);
 
-  const formData = new FormData(form);
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "X-CSRFToken": csrftoken, // Asegúrate de incluir el token CSRF de Django
-      },
-      body: formData,
-    });
-    const data = await response.json();
-    if (response.ok) {
-      form.reset();
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
+        body: formData,
+      });
+      const data = await response.json();
+      if (response.ok) {
+        form.reset();
+      }
+      funcion(data); //ejecutar funcion si la respuesta es correcta
+    } catch (error) {
+      console.error("Error:", error);
     }
-    console.log(data); // Muestra el arreglo en la consola
-  } catch (error) {
-    console.error("Error:", error);
-  }
-});
+  });
+}
