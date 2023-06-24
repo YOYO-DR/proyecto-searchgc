@@ -25,3 +25,6 @@ class ProcesarDatos(View):
         cara=obtenerCara(data)
         guardarCara(cara)
         return JsonResponse(cara)
+
+def prueba(request):
+    return render(request,'plt/hambur.html')

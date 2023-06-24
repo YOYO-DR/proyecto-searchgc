@@ -8,8 +8,8 @@ from django.views.generic import FormView, TemplateView
 from .forms import crearUsuarioForm, IniciarSesionForm
 
 
-class InicioView(TemplateView):
-  template_name = 'inicio.html'
+class InicioView(TemplateView): 
+  template_name = 'inicio/inicio.html'
 
   def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
@@ -20,7 +20,7 @@ class InicioView(TemplateView):
 
 class RegitroView(FormView):
   form_class = crearUsuarioForm
-  template_name = 'registro.html'
+  template_name = 'inicio/registro.html'
   success_url = reverse_lazy('inicio:inicio')
 
   def dispatch(self, request, *args, **kwargs):
@@ -46,7 +46,7 @@ class RegitroView(FormView):
 
 class IniciarSesionView(FormView):
   form_class = IniciarSesionForm
-  template_name = 'iniciarS.html'
+  template_name = 'inicio/iniciarS.html'
   success_url = reverse_lazy('inicio:inicio')
 
   def form_valid(self, form):
