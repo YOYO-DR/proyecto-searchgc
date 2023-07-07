@@ -4,7 +4,7 @@ function enviarPost(idForm, csrftoken, url, funcion) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     //obtengo el boton del formulario
-    const btnSubmit = document.getElementById("btn-form-juegos");
+    const btnSubmit = form.querySelector('button[type="submit"]');
     //obtengo el valor inicial del boton
     let valorSubmit = btnSubmit.innerHTML;
     //creo el spiner de bootstrap
