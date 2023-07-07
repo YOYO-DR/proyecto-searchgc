@@ -21,7 +21,8 @@
 <script src="{% static 'js/enviarpost.js' %}"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () { //Ejecuto cuando el dom se cargue por completo
-    const callback = (data) => { //creo la funcion la cual se la voy a pasar a la funcion de enciar peticion post
+
+    let callback = (data) => { //creo la funcion la cual se la voy a pasar a la funcion de enviar peticion post
       const divAcordeones = document.getElementById("carateristicas"); //selecciono donde voy a poner los datos devueltos
       let acordeones = ``; //donde voy a crear el acordeon
       let acordeon = (nombre, valores) => { //funcion para crear cada acordeon, recibe nombre de la caracteristica y su arreglo de valores
@@ -72,13 +73,15 @@
       }
       divAcordeones.innerHTML = acordeones; // lo meto al div 
     };
-
+    {% comment %} Si el usuario esta autenticado, ejecuto la funcion para agregar la funcion y el evento al formulario {% endcomment %}
+  {% if user.is_authenticated %}
     enviarPost( // le paso los valores requeridos
       "envioTxt", // id formulario
       "{{csrf_token}}", // token de seguridad
       "{% url 'juegos:procesar' %}", //url hacia donde va a mandar la petición
       callback // la funcion a realizar
     );
+    {% endif %}
   });
 </script>
 

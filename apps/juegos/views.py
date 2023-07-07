@@ -11,7 +11,7 @@ from .functions import obtenerCara,guardarCara
 class ProcesarDatos(View):
     def dispatch(self, request, *args, **kwargs):
         if request.method=='GET':
-           inicio = reverse_lazy('inicio:iniciarsesion')
+           inicio = reverse_lazy('account:iniciarsesion')
            return HttpResponseRedirect(inicio)
         return super().dispatch(request, *args, **kwargs)
 

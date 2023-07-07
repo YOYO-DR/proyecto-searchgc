@@ -146,7 +146,7 @@ LOGOUT_REDIRECT_URL = 'inicio:inicio'
 LOGIN_REDIRECT_URL = 'inicio:inicio'
 
 # por si dentra a una vista que requiera que el usuario inicie sesión
-LOGIN_URL = 'inicio:iniciarsesion'
+LOGIN_URL = 'account:iniciarsesion'
 
 # clase usuario modificada
 AUTH_USER_MODEL = 'user.User'
