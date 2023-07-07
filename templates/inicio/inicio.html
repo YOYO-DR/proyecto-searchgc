@@ -8,7 +8,7 @@
   <label for="formFile" class="form-label">Caracteristicas de cpu-z</label>
   <input class="form-control" name="archivo" type="file" id="formFile" accept=".txt" required>
 </div>
-  <button class="btn btn-success w-25 mt-2" type="submit">Subir</button>
+  <button disabled id="btn-form-juegos" class="btn btn-success w-50 mt-2 d-flex justify-content-center align-items-center" type="submit">Subir</button>
 </form>
 {% else %}
 <h1>{{dato}}</h1>
@@ -75,6 +75,8 @@
     };
     {% comment %} Si el usuario esta autenticado, ejecuto la funcion para agregar la funcion y el evento al formulario {% endcomment %}
   {% if user.is_authenticated %}
+    const btnSubmit = document.getElementById("btn-form-juegos")
+    btnSubmit.disabled = false
     enviarPost( // le paso los valores requeridos
       "envioTxt", // id formulario
       "{{csrf_token}}", // token de seguridad
